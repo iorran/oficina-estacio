@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { api, Speech } from "@estacio/data-acess";
+import { Speech, useSpeech } from "@estacio/data-acess";
 import { WorkshopForm } from "./workshop-form/workshop-form";
 
 import List from '@material-ui/core/List';
@@ -9,40 +9,80 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Button from '@material-ui/core/Button';
 import InboxIcon from '@material-ui/icons/Inbox';
+import { IconButton, makeStyles, Paper } from '@material-ui/core';
+import InputBase from '@material-ui/core/InputBase';
+import SearchIcon from '@material-ui/icons/Search';
 
 /* eslint-disable-next-line */
 export interface FeatureHomeProps {}
 
-export const FeatureHome = (props: FeatureHomeProps) => {
-  const [speechs, setSpeechs] = useState<Speech[]>([]);
-  const [speech, setSpeech] = useState<Speech>();
+const useStyles = makeStyles((theme) => ({
+  root: {
+    padding: '2px 4px',
+    display: 'flex',
+    alignItems: 'center',
+    width: 400,
+  },
+  input: {
+    marginLeft: theme.spacing(1),
+    flex: 1,
+  },
+  iconButton: {
+    padding: 10,
+  },
+  divider: {
+    height: 28,
+    margin: 4,
+  },
+}));
 
-  async function load() {
-    const { data } = await api.get<Speech[]>('speeches');
-    console.log("load -> response", data);
-    setSpeechs(data);
-    return data;
-  }
+export const FeatureHome = (props: FeatureHomeProps) => {
+  const classes = useStyles();
+  const [newSpeech, setNewSpeech] = useState<Speech>();
+  const [filteredSpeeches, setFilteredSpeeches] = useState<Speech[]>([]);
+  const { data: speeches } = useSpeech<Speech[]>('speeches');
 
   useEffect(() => {
-    load();
-  }, []);
+    setFilteredSpeeches(speeches)
+  }, [speeches]);
 
-  // function ListItemLink(props) {
-  //   return <ListItem button component="a" {...props} />;
-  // }
+  if (!speeches) return <div>loading...</div>
 
   function handleClick() {
-    setSpeech({} as Speech);
+    setNewSpeech({} as Speech);
   }
+
+  function handleFilter(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    const valueToFilter = e.target.value;
+    if(!valueToFilter){
+      setFilteredSpeeches(speeches);
+    } else {
+      const filtered = speeches.filter(speech => speech.title.includes(valueToFilter));
+      setFilteredSpeeches(filtered);
+    }
+  }
+
   return (
     <div>
       <Button variant="contained" color="primary" onClick={handleClick}>
         Nova Palestra
       </Button>
-      {speech && <WorkshopForm />}
+      <br/>
+      {newSpeech && <WorkshopForm />}
+      <br />
+      <Paper component="form" className={classes.root}>
+        <InputBase
+          className={classes.input}
+          placeholder="Filtrar workshop"
+          onChange={(e) => handleFilter(e)}
+        />
+        <IconButton type="submit" aria-label="search">
+          <SearchIcon />
+        </IconButton>
+      </Paper>
+      <br/>
       <List component="nav" aria-label="main mailbox folders">
-        {speechs.map(speech => {
+        {filteredSpeeches && filteredSpeeches.map(speech => {
           return (
             <ListItem button key={speech.id}>
               <ListItemIcon>

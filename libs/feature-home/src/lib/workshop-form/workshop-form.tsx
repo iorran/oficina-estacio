@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { trigger } from 'swr';
+
 import { useForm } from "react-hook-form";
 import { Button, TextField } from '@material-ui/core';
 import Icon from '@material-ui/core/Icon';
@@ -16,13 +18,15 @@ interface Inputs {
 export const WorkshopForm = (props: WorkshopFormProps) => {
   const { register, handleSubmit, errors } = useForm<Inputs>();
 
-  function onSubmit (data: Speech) {
-    console.log("onSubmit -> data", data);
+  async function onSubmit (data: Speech) {
+    await api.post('speeches', data);
+    trigger('speeches');
   }
 
   function handleClick() {
     handleSubmit(onSubmit)();
   }
+
   return (
     <form>
       <div>
