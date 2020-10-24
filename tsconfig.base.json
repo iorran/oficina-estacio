@@ -15,7 +15,10 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@estacio/data-acess": ["libs/data-acess/src/index.ts"],
+      "@estacio/feature-home": ["libs/feature-home/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

@@ -1,11 +1,9 @@
 import React from 'react';
 
+import { FeatureHome  } from "@estacio/feature-home";
+
 export const App = () => {
-  return (
-    <div>
-      Hello World!
-    </div>
-  );
+  return <FeatureHome />;
 };
 
 export default App;

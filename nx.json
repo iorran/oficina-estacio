@@ -29,6 +29,12 @@
     "workshop-e2e": {
       "tags": [],
       "implicitDependencies": ["workshop"]
+    },
+    "data-acess": {
+      "tags": []
+    },
+    "feature-home": {
+      "tags": []
     }
   }
 }
